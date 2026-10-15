@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WEB CLIPPER</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">WEB CLIPPER</h1>
+          <span class="brand-subtitle">Smart Web Collector</span>
+        </div>
+      </div>
+      <div class="nav-tabs">
+        <button id="tab-btn-clip" class="nav-btn active" title="새 클립 추가">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          수집하기
+        </button>
+        <button id="tab-btn-list" class="nav-btn" title="저장된 목록 보기">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          저장함 <span id="badge-count" class="badge">0</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <!-- MAIN VIEW 1: CLIP FORM -->
+    <main id="view-clip" class="view-panel active">
+      <form id="clip-form">
+        <!-- Page Title & URL Section -->
+        <div class="field-group">
+          <div class="field-label-row">
+            <label for="clip-title" class="field-label">웹페이지 제목</label>
+            <span class="badge-auto">자동 감지</span>
+          </div>
+          <div class="input-with-action">
+            <input type="text" id="clip-title" class="input-text" placeholder="페이지 제목을 불러오는 중..." required />
+            <button type="button" id="btn-refresh-info" class="btn-icon-refresh" title="페이지 정보 다시 읽기">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="clip-url" class="field-label">웹페이지 URL</label>
+          <input type="url" id="clip-url" class="input-text input-readonly" readonly placeholder="https://..." />
+        </div>
+
+        <!-- Selected Text Section -->
+        <div class="field-group">
+          <div class="field-label-row">
+            <label for="clip-text" class="field-label">수집된 본문 텍스트 (드래그)</label>
+            <button type="button" id="btn-regrab-text" class="btn-text-action">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              드래그 텍스트 다시 가져오기
+            </button>
+          </div>
+          <textarea id="clip-text" class="input-textarea" rows="4" placeholder="웹페이지에서 마우스로 드래그한 텍스트가 자동으로 채워집니다. 필요한 경우 직접 편집하거나 붙여넣을 수도 있습니다."></textarea>
+          <div class="char-helper"><span id="text-char-count">0</span>자</div>
+        </div>
+
+        <!-- Personal Notes Section -->
+        <div class="field-group">
+          <label for="clip-note" class="field-label">개인 메모</label>
+          <textarea id="clip-note" class="input-textarea" rows="2" placeholder="이 자료에 대한 생각, 기억할 점, 활용 아이디어를 적어보세요..."></textarea>
+        </div>
+
+        <!-- Tags Section -->
+        <div class="field-group">
+          <label for="clip-tags" class="field-label">태그 (쉼표 또는 엔터로 구분)</label>
+          <input type="text" id="clip-tags" class="input-text" placeholder="예: 개발, 업무, 아이디어, 기사" />
+          <div class="quick-tags-container">
+            <span class="quick-tag-label">추천:</span>
+            <button type="button" class="chip-quick-tag" data-tag="업무">#업무</button>
+            <button type="button" class="chip-quick-tag" data-tag="레퍼런스">#레퍼런스</button>
+            <button type="button" class="chip-quick-tag" data-tag="아이디어">#아이디어</button>
+            <button type="button" class="chip-quick-tag" data-tag="할일">#할일</button>
+            <button type="button" class="chip-quick-tag" data-tag="기사">#기사</button>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button type="submit" id="btn-save-clip" class="btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            클립 저장하기
+          </button>
+        </div>
+      </form>
+    </main>
+
+    <!-- MAIN VIEW 2: SAVED LIST -->
+    <section id="view-list" class="view-panel">
+      <!-- Search & Tag Filter Bar -->
+      <div class="filter-toolbar">
+        <div class="search-box">
+          <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="search-input" class="search-input" placeholder="제목, 본문, 메모, 태그 검색..." />
+          <button type="button" id="btn-clear-search" class="btn-clear-search" title="검색어 지우기">&times;</button>
+        </div>
+        <div id="tag-filter-list" class="tag-filter-list">
+          <!-- Dynamic tags will be rendered here -->
+        </div>
+      </div>
+
+      <!-- Clips Cards Container -->
+      <div id="clips-container" class="clips-container">
+        <!-- Rendered items or empty state -->
+      </div>
+
+      <!-- Bottom Action Bar (Export CSV, JSON, Delete All) -->
+      <footer class="list-footer">
+        <div class="footer-stats">
+          총 <strong id="footer-count">0</strong>개 항목
+        </div>
+        <div class="footer-buttons">
+          <button type="button" id="btn-export-csv" class="btn-export" title="엑셀 호환 UTF-8 BOM CSV 파일 다운로드">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            CSV 내보내기
+          </button>
+          <button type="button" id="btn-clear-all" class="btn-danger-outline" title="저장된 자료 모두 삭제">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            전체 비우기
+          </button>
+        </div>
+      </footer>
+    </section>
+
+    <!-- Confirm Modal -->
+    <div id="modal-confirm" class="modal-backdrop hidden">
+      <div class="modal-dialog">
+        <h3 id="modal-title" class="modal-title">확인</h3>
+        <p id="modal-message" class="modal-desc">정말 삭제하시겠습니까?</p>
+        <div class="modal-actions">
+          <button type="button" id="modal-btn-cancel" class="btn-secondary">취소</button>
+          <button type="button" id="modal-btn-confirm" class="btn-danger">삭제</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

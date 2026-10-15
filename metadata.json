@@ -1,0 +1,6 @@
+{
+  "name": "WEB CLIPPER - 크롬 확장 프로그램 & 다운로드 센터",
+  "description": "Chrome Extension Manifest V3 기반의 웹 클리퍼 확장 프로그램 다운로드 및 대화형 시뮬레이터",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

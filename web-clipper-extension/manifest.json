@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "WEB CLIPPER",
+  "version": "1.0.0",
+  "description": "웹페이지의 제목, URL, 드래그한 본문 텍스트와 메모/태그를 손쉽게 수집하고 CSV로 내보내는 크롬 확장 프로그램",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "WEB CLIPPER 열기",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
